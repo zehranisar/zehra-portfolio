@@ -192,6 +192,7 @@ export const projects: Project[] = [
     summary:
       "Q-learning, DQN and PPO agents learn to run a four-way intersection, benchmarked against fixed-timer and longest-queue controllers on 30 unseen scenarios per traffic level. Includes a live side-by-side demo.",
     stack: ["Python", "Gymnasium", "Stable-Baselines3", "PyTorch", "FastAPI", "React"],
+    live: "https://smart-traffic-rl-three.vercel.app",
     repo: "https://github.com/zehranisar/smart-traffic-rl",
     highlight: [
       { value: "−80%", label: "queue in normal traffic" },
