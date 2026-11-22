@@ -118,7 +118,6 @@ export type Category = "AI / ML" | "Full Stack" | "Other";
 
 export type Project = {
   title: string;
-  emoji: string;
   category: Category;
   summary: string;
   stack: string[];
@@ -132,7 +131,6 @@ export type Project = {
 export const projects: Project[] = [
   {
     title: "TalentScan AI",
-    emoji: "🧠",
     category: "AI / ML",
     summary:
       "AI-powered resume screening and recruitment assistant. A full-stack platform that automates resume screening with NLP (keyword extraction, skill matching, candidate scoring), plus a Retrieval-Augmented Generation pipeline with sentence-transformers, PostgreSQL vector storage and Groq (LLaMA 3.1) behind a real-time recruiter chatbot. Secure FastAPI backend with JWT authentication, email verification and screening history; responsive React frontend with an analytics dashboard and a token-streamed chatbot with markdown rendering.",
@@ -143,7 +141,6 @@ export const projects: Project[] = [
   },
   {
     title: "Majestic North Tours",
-    emoji: "🏔️",
     category: "Full Stack",
     summary:
       "Tourism discovery and booking platform for exploring and booking tours across Gilgit-Baltistan, Pakistan, with secure authentication and an admin dashboard. Includes destination discovery, tour packages, booking management and travel information modules.",
@@ -154,18 +151,16 @@ export const projects: Project[] = [
   },
   {
     title: "CardioScan.ai",
-    emoji: "❤️",
     category: "AI / ML",
     summary:
       "Cardiovascular risk assessment platform that analyses clinical markers and uploaded medical reports with machine learning to produce explainable risk assessments. Includes secure user authentication, prediction history, medical report upload and parsing, and a Gemini AI chatbot that provides heart-health education while directing users to qualified healthcare professionals.",
     stack: ["Python", "Machine Learning", "FastAPI", "React", "Gemini API"],
-    live: "https://cardio-scan-ai-nine.vercel.app",
+    live: "https://cardio-scan-ai-sooty.vercel.app",
     repo: "https://github.com/zehranisar/CardioScan.ai",
     featured: true,
   },
   {
     title: "PowerPilot AI",
-    emoji: "⚡",
     category: "AI / ML",
     summary:
       "Electricity demand forecasting platform. Machine learning models forecast electricity demand and serve predictions through a live dashboard, with FastAPI backend services delivering model predictions to React-based analytics visualisations.",
@@ -176,7 +171,6 @@ export const projects: Project[] = [
   },
   {
     title: "NexSpend",
-    emoji: "💰",
     category: "Full Stack",
     summary:
       "Full-stack expense tracking and analytics platform with interactive dashboards for personal finance analysis. RESTful APIs handle all data operations, with real-time analytics of user spending patterns, OCR receipt extraction, budgets and CSV export.",
@@ -187,7 +181,6 @@ export const projects: Project[] = [
   },
   {
     title: "Smart Traffic Signal Control",
-    emoji: "🚦",
     category: "AI / ML",
     summary:
       "Q-learning, DQN and PPO agents learn to run a four-way intersection, benchmarked against fixed-timer and longest-queue controllers on 30 unseen scenarios per traffic level. Includes a live side-by-side demo.",
@@ -202,7 +195,6 @@ export const projects: Project[] = [
   },
   {
     title: "Gravite",
-    emoji: "🌐",
     category: "Full Stack",
     summary: "Responsive website for a software company.",
     stack: ["React", "Flask"],
@@ -211,7 +203,6 @@ export const projects: Project[] = [
   },
   {
     title: "Event Manager",
-    emoji: "📱",
     category: "Other",
     summary:
       "Android app for university events: registrations, reminders and email notifications.",
@@ -220,7 +211,6 @@ export const projects: Project[] = [
   },
   {
     title: "IoT Smart Irrigation System",
-    emoji: "🌱",
     category: "Other",
     summary: "IoT-based smart irrigation system.",
     stack: ["C++", "IoT"],
@@ -228,7 +218,6 @@ export const projects: Project[] = [
   },
   {
     title: "Computer Vision Project",
-    emoji: "👁️",
     category: "AI / ML",
     summary: "Computer vision experiments in Jupyter Notebook.",
     stack: ["Python", "Jupyter"],
@@ -239,14 +228,12 @@ export const projects: Project[] = [
 export const collaborations = [
   {
     title: "SimpleLang Compiler",
-    emoji: "🛠️",
     summary:
       "A compiler written from scratch in Python: lexer, parser, semantic analysis, IR generation, optimizer, code generator and GUI, with no parser generators.",
     repo: "https://github.com/habib-u-rahman/SimpleLang-Compiler",
   },
   {
     title: "Solar System Simulation",
-    emoji: "🪐",
     summary: "Solar system simulation.",
     repo: "https://github.com/habib-u-rahman/Solar_System_simulation",
   },
@@ -301,7 +288,6 @@ export const skills: { group: string; items: string[] }[] = [
 export type Certificate = {
   title: string;
   provider: string;
-  emoji: string;
   // Words that appear in the certificate's file name (lowercase). Any PDF or image you drop
   // into src/certificates whose name contains one of these words is attached to this card.
   match: string[];
@@ -311,17 +297,20 @@ export const certificates: Certificate[] = [
   {
     title: "Ethical Hacking & Cyber Security",
     provider: "Learning With Earning (LWE)",
-    emoji: "🔐",
     match: ["ethical", "hacking", "cyber"],
   },
   {
     title: "Digital Content Writing Mastery",
     provider: "Learning With Earning (LWE)",
-    emoji: "✍️",
     match: ["content", "writing"],
   },
-  { title: "Machine Learning Specialization", provider: "Coursera", emoji: "🧠", match: ["machine"] },
-  { title: "Python for AI", provider: "Coursera", emoji: "🐍", match: ["python"] },
-  { title: "Android Application Development", provider: "Coursera", emoji: "📱", match: ["android"] },
-  { title: "CS50x Puzzle Day 2026", provider: "Harvard CS50", emoji: "🧩", match: ["cs50", "puzzle", "harvard"] },
+  { title: "Machine Learning Specialization", provider: "Coursera", match: ["machine"] },
+  { title: "Python for AI", provider: "Coursera", match: ["python"] },
+  { title: "Android Application Development", provider: "Coursera", match: ["android"] },
+  { title: "CS50x Puzzle Day 2026", provider: "Harvard CS50", match: ["cs50", "puzzle", "harvard"] },
+  {
+    title: "Exploring the World of Cybersecurity Workshop",
+    provider: "TriberSec, certificate of participation, 9 Nov 2026",
+    match: ["tribersec", "workshop"],
+  },
 ];
