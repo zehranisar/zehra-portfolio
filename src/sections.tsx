@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   certificates,
   collaborations,
@@ -11,79 +11,116 @@ import {
   stats,
   type Category,
 } from "./data";
-import { Chip, Icon, LinkButton, Reveal, Section } from "./ui";
+import { Chip, Icon, LinkButton, Monogram, Section } from "./ui";
 
 /* ---------- Hero ---------- */
 
-function useRotatingText(items: string[], ms = 2600) {
-  const [i, setI] = useState(0);
-  useEffect(() => {
-    const t = setInterval(() => setI((n) => (n + 1) % items.length), ms);
-    return () => clearInterval(t);
-  }, [items.length, ms]);
-  return items[i];
+// Real results from the Smart Traffic project: average queue length relative to a 30 s fixed timer (DQN, simulation).
+const results = [
+  { label: "Normal traffic", change: "-80%", dqn: 20 },
+  { label: "Rush hour", change: "-58%", dqn: 42 },
+];
+
+function ResultPanel() {
+  return (
+    <figure
+      className="hero-rise rounded-xl border border-white/15 bg-white/[0.06] p-6 sm:p-7"
+      style={{ animationDelay: "0.35s" }}
+      aria-label="Smart Traffic Signal Control: DQN queue length compared with a fixed timer"
+    >
+      <figcaption>
+        <p className="font-display text-xl font-bold text-white">Smart Traffic Signal Control</p>
+        <p className="mt-1 text-sm leading-relaxed text-[#bdb2d6]">
+          Average queue length, DQN agent against a 30 s fixed timer. Lower is better.
+        </p>
+      </figcaption>
+
+      <div className="mt-6 space-y-6">
+        {results.map((r, i) => (
+          <div key={r.label}>
+            <div className="flex items-baseline justify-between">
+              <p className="text-sm font-medium text-white">{r.label}</p>
+              <p className="font-display text-3xl font-extrabold text-signal">{r.change}</p>
+            </div>
+            <div className="mt-2 space-y-1.5">
+              <div className="flex items-center gap-3">
+                <span className="w-20 shrink-0 text-xs text-[#bdb2d6]">Fixed timer</span>
+                <div className="h-3 flex-1 rounded-sm bg-white/10">
+                  <div className="bar-grow h-full w-full rounded-sm bg-white/45" style={{ animationDelay: `${0.7 + i * 0.25}s` }} />
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="w-20 shrink-0 text-xs text-white">DQN agent</span>
+                <div className="h-3 flex-1 rounded-sm bg-white/10">
+                  <div
+                    className="bar-grow h-full rounded-sm bg-signal"
+                    style={{ width: `${r.dqn}%`, animationDelay: `${0.95 + i * 0.25}s` }}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <p className="mt-6 text-xs leading-relaxed text-[#bdb2d6]">
+        Measured on 30 unseen scenarios per traffic level. A simple longest-queue rule still wins in light traffic.
+      </p>
+      <a
+        href="#projects"
+        className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-signal hover:underline"
+      >
+        See the project <Icon name="arrow" className="h-4 w-4" />
+      </a>
+    </figure>
+  );
 }
 
 export function Hero() {
-  const role = useRotatingText(profile.roles);
   return (
-    <header id="top" className="hero-bg relative overflow-hidden">
-      <div className="grid-bg absolute inset-0" aria-hidden="true" />
-      <div className="relative mx-auto grid w-full max-w-6xl items-center gap-12 px-5 pb-20 pt-32 sm:px-8 sm:pt-40 lg:grid-cols-[1.4fr_1fr]">
+    <header id="top" className="bg-hero text-white">
+      <div className="mx-auto grid w-full max-w-6xl items-center gap-12 px-5 pb-14 pt-16 sm:px-8 sm:pt-24 lg:grid-cols-[1.25fr_1fr] lg:gap-14">
         <div>
-          <p className="inline-flex items-center gap-2 rounded-full border border-line bg-surface px-3 py-1 font-mono text-xs text-muted">
-            <span className="h-2 w-2 rounded-full bg-emerald-400" /> {profile.location} · BS Computer Science
+          <p className="hero-rise text-base text-[#bdb2d6]">
+            {profile.location}, BS Computer Science
           </p>
-          <h1 className="mt-6 text-5xl font-extrabold tracking-tight sm:text-6xl">
-            Hi, I'm <span className="gradient-text">{profile.name}</span>
+          <h1 className="hero-name mt-5 text-white">
+            <span className="hero-rise block" style={{ animationDelay: "0.05s" }}>
+              Zehra
+            </span>
+            <span className="hero-rise block" style={{ animationDelay: "0.15s" }}>
+              Nisar
+            </span>
           </h1>
-          <p className="mt-4 h-9 font-mono text-xl text-accent-2 sm:text-2xl" aria-live="polite">
-            {role}
-            <span className="caret ml-0.5 inline-block w-[2px] bg-accent-2 align-middle">&nbsp;</span>
+          <p className="hero-rise mt-7 font-display text-2xl font-bold text-signal sm:text-3xl" style={{ animationDelay: "0.25s" }}>
+            AI/ML Engineer and Full‑Stack Developer
           </p>
-          <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted">{profile.tagline}</p>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <LinkButton href="#projects" icon="arrow">
+          <p className="hero-rise mt-4 max-w-xl text-lg leading-relaxed text-[#d9d1ec]" style={{ animationDelay: "0.3s" }}>
+            {profile.tagline}
+          </p>
+          <div className="hero-rise mt-8 flex flex-wrap gap-3" style={{ animationDelay: "0.35s" }}>
+            <LinkButton href="#projects" variant="signal" icon="arrow">
               View projects
             </LinkButton>
-            <LinkButton href={`mailto:${profile.email}`} variant="ghost" icon="mail">
+            <LinkButton href={`mailto:${profile.email}`} variant="outline-light" icon="mail">
               Get in touch
             </LinkButton>
-            <LinkButton href={profile.github} variant="ghost" icon="github">
+            <LinkButton href={profile.github} variant="outline-light" icon="github">
               GitHub
             </LinkButton>
           </div>
         </div>
 
-        <div className="mx-auto w-full max-w-sm">
-          <div className="card relative p-6 font-mono text-sm leading-7">
-            <div className="mb-4 flex gap-1.5" aria-hidden="true">
-              <span className="h-3 w-3 rounded-full bg-red-400/80" />
-              <span className="h-3 w-3 rounded-full bg-amber-400/80" />
-              <span className="h-3 w-3 rounded-full bg-emerald-400/80" />
-            </div>
-            <p>
-              <span className="text-accent">class</span> <span className="text-accent-2">ZehraNisar</span>:
-            </p>
-            <p className="pl-4">role = <span className="text-emerald-400">"AI/ML + Full-Stack"</span></p>
-            <p className="pl-4">studying = <span className="text-emerald-400">"BS Computer Science"</span></p>
-            <p className="pl-4">stack = [</p>
-            <p className="pl-8"><span className="text-emerald-400">"Python"</span>, <span className="text-emerald-400">"TypeScript"</span>,</p>
-            <p className="pl-8"><span className="text-emerald-400">"React"</span>, <span className="text-emerald-400">"FastAPI"</span>,</p>
-            <p className="pl-8"><span className="text-emerald-400">"PostgreSQL"</span>, <span className="text-emerald-400">"PyTorch"</span></p>
-            <p className="pl-4">]</p>
-            <p className="pl-4">currently = <span className="text-emerald-400">"Reinforcement Learning"</span></p>
-          </div>
-        </div>
+        <ResultPanel />
       </div>
 
-      <div className="relative mx-auto w-full max-w-6xl px-5 pb-16 sm:px-8">
-        <dl className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-          {stats.map((s) => (
-            <div key={s.label} className="card p-5">
+      <div className="mx-auto w-full max-w-6xl px-5 pb-12 sm:px-8">
+        <dl className="grid grid-cols-2 border-t border-white/15 lg:grid-cols-4">
+          {stats.map((s, i) => (
+            <div key={s.label} className={`py-6 pr-4 ${i > 0 ? "lg:border-l lg:border-white/15 lg:pl-6" : ""}`}>
               <dt className="sr-only">{s.label}</dt>
-              <dd className="text-4xl font-extrabold gradient-text">{s.value}</dd>
-              <p className="mt-1 text-sm text-muted">{s.label}</p>
+              <dd className="font-display text-5xl font-extrabold text-white">{s.value}</dd>
+              <p className="mt-1 max-w-[14rem] text-sm text-[#bdb2d6]">{s.label}</p>
             </div>
           ))}
         </dl>
@@ -94,60 +131,35 @@ export function Hero() {
 
 /* ---------- About ---------- */
 
+const focusAreas = [
+  ["AI and ML products", "Prediction, forecasting, explainability and OCR"],
+  ["Reinforcement learning", "Q-learning, DQN and PPO agents in custom environments"],
+  ["Full-stack web apps", "React, TypeScript and FastAPI, deployed live"],
+];
+
 export function About() {
   return (
-    <Section id="about" eyebrow="About" title="Building things that work end to end">
-      <div className="grid gap-8 lg:grid-cols-[1.3fr_1fr]">
-        <Reveal className="space-y-4 text-lg leading-relaxed text-muted">
-          {profile.about.map((p) => (
-            <p key={p}>{p}</p>
-          ))}
-          <div className="flex flex-wrap gap-2 pt-2">
-            {competencies.map((c) => (
-              <Chip key={c}>{c}</Chip>
-            ))}
-          </div>
-        </Reveal>
-        <Reveal delay={120}>
-          <div className="card p-6">
-            <h3 className="text-sm font-semibold uppercase tracking-widest text-muted">What I work on</h3>
-            <ul className="mt-4 space-y-3">
-              {[
-                ["🤖", "AI & ML products", "Prediction, forecasting, explainability, OCR"],
-                ["🎮", "Reinforcement learning", "Q-learning, DQN and PPO agents in custom environments"],
-                ["🌐", "Full stack web apps", "React, TypeScript and FastAPI, deployed live"],
-              ].map(([icon, title, text]) => (
-                <li key={title} className="flex gap-3">
-                  <span className="text-xl" aria-hidden="true">{icon}</span>
-                  <span>
-                    <span className="block font-semibold">{title}</span>
-                    <span className="text-sm text-muted">{text}</span>
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </Reveal>
+    <Section id="about" title="About" intro="Building things that work from the data to the screen.">
+      <div className="space-y-5 text-lg leading-relaxed text-muted">
+        {profile.about.map((p, i) => (
+          <p key={p} className={i === 0 ? "text-xl text-ink" : ""}>
+            {p}
+          </p>
+        ))}
       </div>
-    </Section>
-  );
-}
 
-/* ---------- Education ---------- */
+      <dl className="mt-10 divide-y divide-line border-y border-line">
+        {focusAreas.map(([t, d]) => (
+          <div key={t} className="grid gap-1 py-4 sm:grid-cols-[220px_1fr] sm:gap-6">
+            <dt className="font-display text-lg font-bold">{t}</dt>
+            <dd className="text-muted">{d}</dd>
+          </div>
+        ))}
+      </dl>
 
-export function Education() {
-  return (
-    <Section id="education" eyebrow="Education" title="Where I study">
-      <div className="grid gap-5 md:grid-cols-2">
-        {education.map((e, i) => (
-          <Reveal key={e.school} delay={i * 80}>
-            <div className="card h-full p-6">
-              <p className="font-mono text-sm text-accent-2">{e.period}</p>
-              <h3 className="mt-2 text-xl font-bold leading-snug">{e.school}</h3>
-              <p className="mt-2 text-muted">{e.degree}</p>
-              <p className="mt-1 font-semibold">{e.detail}</p>
-            </div>
-          </Reveal>
+      <div className="mt-8 flex flex-wrap gap-2">
+        {competencies.map((c) => (
+          <Chip key={c}>{c}</Chip>
         ))}
       </div>
     </Section>
@@ -170,34 +182,39 @@ function letterFor(key: string): string | undefined {
 
 export function Experience() {
   return (
-    <Section id="experience" eyebrow="Experience" title="Three internships in 2026">
-      <ol className="relative space-y-6 border-l border-line pl-6 sm:pl-8">
-        {experience.map((e, i) => (
-          <li key={e.org} className="relative">
-            <span className="absolute -left-[31px] top-6 h-3 w-3 rounded-full border-2 border-accent bg-bg sm:-left-[39px]" aria-hidden="true" />
-            <Reveal delay={i * 80}>
-              <div className="card p-6">
-                <div className="flex flex-wrap items-baseline justify-between gap-2">
-                  <h3 className="text-xl font-bold">{e.role}</h3>
-                  <p className="font-mono text-sm text-accent-2">{e.period}</p>
-                </div>
-                <p className="mt-1 text-muted">
+    <Section id="experience" title="Experience" intro="Three internships in web development during 2026.">
+      <ol className="divide-y divide-line border-y border-line">
+        {experience.map((e) => {
+          const letter = letterFor(e.letter);
+          return (
+            <li key={e.org} className="grid gap-4 py-8 md:grid-cols-[190px_1fr] md:gap-8">
+              <div>
+                <p className="font-semibold">{e.period}</p>
+                <p className="mt-1 text-sm text-muted">{e.place}</p>
+              </div>
+              <div>
+                <h3 className="font-display text-2xl font-bold leading-tight">{e.role}</h3>
+                <p className="mt-1 text-lg">
                   {e.link ? (
-                    <a href={e.link} target="_blank" rel="noreferrer" className="font-semibold text-ink underline decoration-accent underline-offset-4">
+                    <a
+                      href={e.link}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="font-semibold text-accent underline decoration-2 underline-offset-4"
+                    >
                       {e.org}
                     </a>
                   ) : (
-                    <span className="font-semibold text-ink">{e.org}</span>
-                  )}{" "}
-                  · {e.place}
+                    <span className="font-semibold text-accent">{e.org}</span>
+                  )}
                 </p>
-                <ul className="mt-3 list-disc space-y-1.5 pl-5 leading-relaxed text-muted marker:text-accent">
+                <ul className="mt-4 list-disc space-y-2 pl-5 leading-relaxed text-muted marker:text-accent">
                   {e.points.map((pt) => (
                     <li key={pt}>{pt}</li>
                   ))}
                 </ul>
                 {e.focus && (
-                  <p className="mt-3 text-sm text-muted">
+                  <p className="mt-4 text-sm text-muted">
                     <span className="font-semibold text-ink">Focus:</span> {e.focus}
                   </p>
                 )}
@@ -206,18 +223,39 @@ export function Experience() {
                     <Chip key={t}>{t}</Chip>
                   ))}
                 </div>
-                {letterFor(e.letter) && (
+                {letter && (
                   <a
-                    href={letterFor(e.letter)}
+                    href={letter}
                     target="_blank"
                     rel="noreferrer"
-                    className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-accent hover:underline"
+                    className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-accent hover:underline"
                   >
                     View letter <Icon name="external" className="h-4 w-4" />
                   </a>
                 )}
               </div>
-            </Reveal>
+            </li>
+          );
+        })}
+      </ol>
+    </Section>
+  );
+}
+
+/* ---------- Education ---------- */
+
+export function Education() {
+  return (
+    <Section id="education" title="Education">
+      <ol className="divide-y divide-line border-y border-line">
+        {education.map((e) => (
+          <li key={e.school} className="grid gap-3 py-7 md:grid-cols-[190px_1fr] md:gap-8">
+            <p className="font-semibold">{e.period}</p>
+            <div>
+              <h3 className="font-display text-xl font-bold leading-snug">{e.school}</h3>
+              <p className="mt-1 text-muted">{e.degree}</p>
+              <p className="mt-1 font-semibold text-accent">{e.detail}</p>
+            </div>
           </li>
         ))}
       </ol>
@@ -229,23 +267,28 @@ export function Experience() {
 
 const filters: ("All" | Category)[] = ["All", "AI / ML", "Full Stack", "Other"];
 
+const toneFor = (c: Category) => (c === "AI / ML" ? "accent" : c === "Full Stack" ? "ink" : "signal");
+const initials = (title: string) => {
+  const words = title.split(/\s+/).filter((w) => /[A-Za-z]/.test(w));
+  if (words.length === 1) return words[0].slice(0, 2).replace(/^./, (c) => c.toUpperCase());
+  return words.slice(0, 2).map((w) => w[0].toUpperCase()).join("");
+};
+
 export function Projects() {
   const [filter, setFilter] = useState<"All" | Category>("All");
   const list = projects.filter((p) => filter === "All" || p.category === filter);
 
   return (
-    <Section id="projects" eyebrow="Projects" title="Things I've built">
-      <div className="flex flex-wrap gap-2" role="tablist" aria-label="Filter projects">
+    <Section id="projects" title="Projects" intro="Most of these are deployed, with a live demo and the code on GitHub.">
+      <div className="flex flex-wrap gap-x-6 gap-y-2 border-b border-line" role="tablist" aria-label="Filter projects">
         {filters.map((f) => (
           <button
             key={f}
             role="tab"
             aria-selected={filter === f}
             onClick={() => setFilter(f)}
-            className={`rounded-full border px-4 py-1.5 text-sm font-medium transition focus:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
-              filter === f
-                ? "border-accent bg-accent text-white"
-                : "border-line bg-surface text-muted hover:border-accent hover:text-ink"
+            className={`-mb-px border-b-2 pb-3 text-sm font-semibold transition-colors focus:outline-none focus-visible:text-accent ${
+              filter === f ? "border-accent text-ink" : "border-transparent text-muted hover:text-ink"
             }`}
           >
             {f}
@@ -253,82 +296,89 @@ export function Projects() {
         ))}
       </div>
 
-      <div className="mt-8 grid gap-6 md:grid-cols-2">
-        {list.map((p) => (
-          <article
-            key={p.title}
-            className={`card card-hover flex flex-col p-6 ${p.featured ? "md:col-span-1" : ""}`}
-          >
-            <div className="flex items-start justify-between gap-3">
-              <div className="flex items-center gap-3">
-                <span className="grid h-11 w-11 place-items-center rounded-xl bg-surface-2 text-2xl" aria-hidden="true">
-                  {p.emoji}
-                </span>
-                <h3 className="text-xl font-bold">{p.title}</h3>
+      <div className="mt-8 grid gap-5 md:grid-cols-2 [grid-auto-flow:dense]">
+        {list.map((p) => {
+          const wide = Boolean(p.highlight) || p.summary.length > 330;
+          return (
+            <article
+              key={p.title}
+              className={`flex flex-col rounded-xl border border-line bg-surface p-6 transition-colors hover:border-accent ${
+                wide ? "md:col-span-2" : ""
+              }`}
+            >
+              <div className="flex items-center gap-4">
+                <Monogram text={initials(p.title)} tone={toneFor(p.category)} />
+                <div className="min-w-0">
+                  <h3 className="font-display text-xl font-bold leading-tight">{p.title}</h3>
+                  <p className="mt-0.5 text-sm text-muted">
+                    {p.category}
+                    {p.badge ? `, ${p.badge.toLowerCase()}` : ""}
+                  </p>
+                </div>
               </div>
-              <span className="shrink-0 rounded-full bg-surface-2 px-2.5 py-1 font-mono text-xs text-accent-2">
-                {p.category}
-              </span>
-            </div>
-            <p className="mt-4 leading-relaxed text-muted">{p.summary}</p>
 
-            {p.highlight && (
-              <div className="mt-4 grid grid-cols-2 gap-3">
-                {p.highlight.map((h) => (
-                  <div key={h.label} className="rounded-xl border border-line bg-surface-2 p-3">
-                    <p className="text-2xl font-extrabold gradient-text">{h.value}</p>
-                    <p className="text-xs text-muted">{h.label}</p>
+              <div className={`mt-4 ${p.highlight ? "grid gap-6 lg:grid-cols-[1fr_auto]" : ""}`}>
+                <p className="leading-relaxed text-muted">{p.summary}</p>
+                {p.highlight && (
+                  <div>
+                    <div className="flex gap-3">
+                      {p.highlight.map((h) => (
+                        <div key={h.label} className="rounded-lg bg-surface-2 px-4 py-3">
+                          <p className="font-display text-3xl font-extrabold text-accent">{h.value.replace("−", "-")}</p>
+                          <p className="max-w-[9rem] text-xs text-muted">{h.label}</p>
+                        </div>
+                      ))}
+                    </div>
+                    <p className="mt-2 max-w-xs text-xs leading-relaxed text-muted">
+                      Average queue vs a 30 s fixed timer, in simulation (DQN). A simple longest-queue rule still wins in
+                      light traffic.
+                    </p>
                   </div>
+                )}
+              </div>
+
+              <div className="mt-4 flex flex-wrap gap-2">
+                {p.stack.map((s) => (
+                  <Chip key={s}>{s}</Chip>
                 ))}
               </div>
-            )}
-            {p.highlight && (
-              <p className="mt-2 text-xs text-muted">
-                Average queue vs a 30 s fixed timer, in simulation (DQN). A simple longest-queue rule still wins in light traffic.
-              </p>
-            )}
-
-            <div className="mt-4 flex flex-wrap gap-2">
-              {p.stack.map((s) => (
-                <Chip key={s}>{s}</Chip>
-              ))}
-            </div>
-            <div className="mt-auto flex flex-wrap gap-3 pt-6">
-              {p.live && (
-                <LinkButton href={p.live} icon="external">
-                  Live demo
+              <div className="mt-auto flex flex-wrap gap-3 pt-6">
+                {p.live && (
+                  <LinkButton href={p.live} icon="external">
+                    Live demo
+                  </LinkButton>
+                )}
+                <LinkButton href={p.repo} variant="ghost" icon="github">
+                  Code
                 </LinkButton>
-              )}
-              <LinkButton href={p.repo} variant="ghost" icon="github">
-                Code
-              </LinkButton>
-            </div>
-          </article>
-        ))}
+              </div>
+            </article>
+          );
+        })}
       </div>
 
-      <Reveal className="mt-16">
-        <h3 className="text-xl font-bold">Collaborations</h3>
-        <p className="mt-1 text-muted">Projects built in collaboration.</p>
-        <div className="mt-6 grid gap-4 md:grid-cols-3">
+      <div className="mt-14">
+        <h3 className="font-display text-2xl font-bold">Collaborations</h3>
+        <p className="mt-1 text-muted">Projects built together with other developers.</p>
+        <ul className="mt-5 divide-y divide-line border-y border-line">
           {collaborations.map((c) => (
-            <a
-              key={c.title}
-              href={c.repo}
-              target="_blank"
-              rel="noreferrer"
-              className="card card-hover block p-5"
-            >
-              <p className="text-2xl" aria-hidden="true">{c.emoji}</p>
-              <h4 className="mt-2 font-bold">{c.title}</h4>
-              <p className="mt-1 text-sm leading-relaxed text-muted">{c.summary}</p>
-              <p className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-accent">
-                View code <Icon name="arrow" className="h-4 w-4" />
-              </p>
-            </a>
+            <li key={c.title}>
+              <a
+                href={c.repo}
+                target="_blank"
+                rel="noreferrer"
+                className="group grid gap-1 py-5 transition-colors sm:grid-cols-[220px_1fr_auto] sm:items-center sm:gap-6"
+              >
+                <span className="font-display text-lg font-bold group-hover:text-accent">{c.title}</span>
+                <span className="text-sm leading-relaxed text-muted">{c.summary}</span>
+                <span className="inline-flex items-center gap-1 text-sm font-semibold text-accent">
+                  View code <Icon name="arrow" className="h-4 w-4" />
+                </span>
+              </a>
+            </li>
           ))}
-        </div>
-      </Reveal>
+        </ul>
+      </div>
     </Section>
   );
 }
@@ -337,21 +387,19 @@ export function Projects() {
 
 export function Skills() {
   return (
-    <Section id="skills" eyebrow="Skills" title="Tools I work with">
-      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {skills.map((g, i) => (
-          <Reveal key={g.group} delay={i * 60}>
-            <div className="card h-full p-5">
-              <h3 className="text-sm font-semibold uppercase tracking-widest text-muted">{g.group}</h3>
-              <div className="mt-4 flex flex-wrap gap-2">
-                {g.items.map((s) => (
-                  <Chip key={s}>{s}</Chip>
-                ))}
-              </div>
-            </div>
-          </Reveal>
+    <Section id="skills" title="Skills" intro="The tools I use day to day.">
+      <dl className="divide-y divide-line border-y border-line">
+        {skills.map((g) => (
+          <div key={g.group} className="grid gap-3 py-5 sm:grid-cols-[200px_1fr] sm:gap-6">
+            <dt className="font-display text-lg font-bold">{g.group}</dt>
+            <dd className="flex flex-wrap gap-2">
+              {g.items.map((s) => (
+                <Chip key={s}>{s}</Chip>
+              ))}
+            </dd>
+          </div>
         ))}
-      </div>
+      </dl>
     </Section>
   );
 }
@@ -374,18 +422,18 @@ const allCertFiles: CertFile[] = Object.entries(certFiles).map(([path, url]) => 
 
 const prettify = (name: string) => name.replace(/\.[^.]+$/, "").replace(/[-_]+/g, " ").trim();
 
-type CertCard = { title: string; provider: string; emoji: string; file?: CertFile };
+type CertCard = { title: string; provider: string; file?: CertFile };
 
 function buildCertCards(): CertCard[] {
   const used = new Set<string>();
   const cards: CertCard[] = certificates.map((c) => {
     const file = allCertFiles.find((f) => !used.has(f.name) && c.match.some((k) => f.name.toLowerCase().includes(k)));
     if (file) used.add(file.name);
-    return { title: c.title, provider: c.provider, emoji: c.emoji, file };
+    return { title: c.title, provider: c.provider, file };
   });
   // Files that match no card are still shown, so nothing you add goes missing.
   for (const f of allCertFiles) {
-    if (!used.has(f.name)) cards.push({ title: prettify(f.name), provider: "Certificate", emoji: "📄", file: f });
+    if (!used.has(f.name)) cards.push({ title: prettify(f.name), provider: "Certificate", file: f });
   }
   return cards;
 }
@@ -393,38 +441,35 @@ function buildCertCards(): CertCard[] {
 export function Certificates() {
   const cards = buildCertCards();
   return (
-    <Section id="certificates" eyebrow="Certifications" title="Learning that backs it up">
-      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {cards.map((c, i) => (
-          <Reveal key={c.title} delay={i * 60}>
-            <div className="card flex h-full flex-col p-5">
-              {c.file && !c.file.isPdf && (
-                <a href={c.file.url} target="_blank" rel="noreferrer" className="mb-4 block overflow-hidden rounded-lg border border-line">
-                  <img
-                    src={c.file.url}
-                    alt={`${c.title} certificate`}
-                    loading="lazy"
-                    className="aspect-[4/3] w-full object-cover object-top transition hover:scale-[1.02]"
-                  />
+    <Section id="certificates" title="Certificates" intro="Courses and programmes I have completed.">
+      <div className="grid gap-5 sm:grid-cols-2">
+        {cards.map((c) => (
+          <div key={c.title} className="flex flex-col rounded-xl border border-line bg-surface p-5">
+            {c.file && !c.file.isPdf && (
+              <a href={c.file.url} target="_blank" rel="noreferrer" className="mb-4 block overflow-hidden rounded-lg border border-line">
+                <img
+                  src={c.file.url}
+                  alt={`${c.title} certificate`}
+                  loading="lazy"
+                  className="aspect-[4/3] w-full object-cover object-top"
+                />
+              </a>
+            )}
+            <h3 className="font-display text-lg font-bold leading-snug">{c.title}</h3>
+            <p className="mt-1 text-sm text-muted">{c.provider}</p>
+            {c.file && (
+              <div className="mt-auto pt-4">
+                <a
+                  href={c.file.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-1.5 text-sm font-semibold text-accent hover:underline"
+                >
+                  View certificate <Icon name="external" className="h-4 w-4" />
                 </a>
-              )}
-              <p className="text-3xl" aria-hidden="true">{c.emoji}</p>
-              <h3 className="mt-3 font-bold leading-snug">{c.title}</h3>
-              <p className="mt-1 text-sm text-muted">{c.provider}</p>
-              {c.file && (
-                <div className="mt-auto pt-4">
-                  <a
-                    href={c.file.url}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex items-center gap-1 text-sm font-semibold text-accent hover:underline"
-                  >
-                    View certificate <Icon name="external" className="h-4 w-4" />
-                  </a>
-                </div>
-              )}
-            </div>
-          </Reveal>
+              </div>
+            )}
+          </div>
         ))}
       </div>
     </Section>
@@ -435,28 +480,31 @@ export function Certificates() {
 
 export function Contact() {
   return (
-    <Section id="contact" eyebrow="Contact" title="Let's build something">
-      <Reveal>
-        <div className="card relative overflow-hidden p-8 sm:p-12">
-          <div className="hero-bg absolute inset-0" aria-hidden="true" />
-          <div className="relative">
-            <p className="max-w-2xl text-xl leading-relaxed">
-              Have an idea, a product or a team that needs <strong>AI, ML or full stack engineering</strong>? I'd like to hear about it.
-            </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <LinkButton href={`mailto:${profile.email}`} icon="mail">
-                {profile.email}
-              </LinkButton>
-              <LinkButton href={profile.linkedin} variant="ghost" icon="linkedin">
-                LinkedIn
-              </LinkButton>
-              <LinkButton href={profile.github} variant="ghost" icon="github">
-                GitHub
-              </LinkButton>
-            </div>
-          </div>
+    <section id="contact" className="bg-hero text-white">
+      <div className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-28">
+        <h2 className="font-display text-5xl font-extrabold leading-[0.95] tracking-tight sm:text-7xl">
+          Let's build
+          <br />
+          something together.
+        </h2>
+        <p className="mt-6 max-w-xl text-lg leading-relaxed text-[#d9d1ec]">
+          Have a product, an idea or a team that needs AI, ML or full-stack engineering? Send me a message.
+        </p>
+        <a
+          href={`mailto:${profile.email}`}
+          className="mt-8 inline-block break-all font-display text-2xl font-bold text-signal underline decoration-2 underline-offset-8 hover:brightness-110 sm:text-4xl"
+        >
+          {profile.email}
+        </a>
+        <div className="mt-8 flex flex-wrap gap-3">
+          <LinkButton href={profile.linkedin} variant="outline-light" icon="linkedin">
+            LinkedIn
+          </LinkButton>
+          <LinkButton href={profile.github} variant="outline-light" icon="github">
+            GitHub
+          </LinkButton>
         </div>
-      </Reveal>
-    </Section>
+      </div>
+    </section>
   );
 }

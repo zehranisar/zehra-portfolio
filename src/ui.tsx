@@ -1,74 +1,47 @@
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import type { ReactNode } from "react";
 
-export function Reveal({
-  children,
-  className = "",
-  delay = 0,
-}: {
-  children: ReactNode;
-  className?: string;
-  delay?: number;
-}) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [seen, setSeen] = useState(false);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    if (!("IntersectionObserver" in window)) {
-      setSeen(true);
-      return;
-    }
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setSeen(true);
-          io.disconnect();
-        }
-      },
-      { threshold: 0.12 },
-    );
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
-
-  return (
-    <div
-      ref={ref}
-      style={{ transitionDelay: `${delay}ms` }}
-      className={`reveal ${seen ? "in" : ""} ${className}`}
-    >
-      {children}
-    </div>
-  );
-}
-
+/* A section is a two-column spread: the title stays beside the content while you read. */
 export function Section({
   id,
-  eyebrow,
   title,
+  intro,
   children,
 }: {
   id: string;
-  eyebrow: string;
   title: string;
+  intro?: string;
   children: ReactNode;
 }) {
   return (
-    <section id={id} className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
-      <Reveal>
-        <p className="font-mono text-sm uppercase tracking-widest text-accent">{eyebrow}</p>
-        <h2 className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">{title}</h2>
-      </Reveal>
-      <div className="mt-10">{children}</div>
+    <section id={id} className="mx-auto w-full max-w-6xl px-5 sm:px-8">
+      <div className="grid gap-8 border-t border-line py-16 sm:py-20 lg:grid-cols-[260px_1fr] lg:gap-14">
+        <div className="lg:sticky lg:top-24 lg:self-start">
+          <h2 className="font-display text-4xl font-extrabold leading-none tracking-tight sm:text-5xl">{title}</h2>
+          {intro && <p className="mt-4 max-w-xs leading-relaxed text-muted">{intro}</p>}
+        </div>
+        <div className="min-w-0">{children}</div>
+      </div>
     </section>
   );
 }
 
 export function Chip({ children }: { children: ReactNode }) {
+  return <span className="rounded-md bg-surface-2 px-2.5 py-1 text-xs font-medium text-muted">{children}</span>;
+}
+
+/* Square monogram used instead of icons, coloured by project category. */
+export function Monogram({ text, tone }: { text: string; tone: "accent" | "ink" | "signal" }) {
+  const styles = {
+    accent: "bg-accent text-on-accent",
+    ink: "bg-ink text-bg",
+    signal: "bg-signal text-[#1a1033]",
+  }[tone];
   return (
-    <span className="rounded-full border border-line bg-surface-2 px-2.5 py-1 font-mono text-xs text-muted">
-      {children}
+    <span
+      className={`grid h-11 w-11 shrink-0 place-items-center rounded-md font-display text-base font-extrabold ${styles}`}
+      aria-hidden="true"
+    >
+      {text}
     </span>
   );
 }
@@ -107,6 +80,8 @@ export function Icon({ name, className = "h-5 w-5" }: { name: IconName; classNam
   );
 }
 
+type Variant = "primary" | "ghost" | "signal" | "outline-light";
+
 export function LinkButton({
   href,
   children,
@@ -115,22 +90,20 @@ export function LinkButton({
 }: {
   href: string;
   children: ReactNode;
-  variant?: "primary" | "ghost";
+  variant?: Variant;
   icon?: IconName;
 }) {
   const base =
-    "inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition focus:outline-none focus-visible:ring-2 focus-visible:ring-accent";
-  const styles =
-    variant === "primary"
-      ? "bg-accent text-white hover:brightness-110"
-      : "border border-line bg-surface text-ink hover:border-accent";
+    "inline-flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-bg";
+  const styles: Record<Variant, string> = {
+    primary: "bg-accent text-on-accent hover:brightness-110",
+    ghost: "border border-line bg-surface text-ink hover:border-accent",
+    signal: "bg-signal text-[#1a1033] hover:brightness-105",
+    "outline-light": "border border-white/30 text-white hover:border-white hover:bg-white/10",
+  };
   const external = href.startsWith("http");
   return (
-    <a
-      href={href}
-      className={`${base} ${styles}`}
-      {...(external ? { target: "_blank", rel: "noreferrer" } : {})}
-    >
+    <a href={href} className={`${base} ${styles[variant]}`} {...(external ? { target: "_blank", rel: "noreferrer" } : {})}>
       {icon && <Icon name={icon} className="h-4 w-4" />}
       {children}
     </a>
